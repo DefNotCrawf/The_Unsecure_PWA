@@ -95,3 +95,22 @@ def validate_number(number: str) -> bool:
 # Function to salt a hash input
 def salt_and_hash(password: str) -> bytes:
     return  # to be implemented
+
+
+def example_data_handling(password: str) -> str:
+    if len(password) < 9 or len(password) > 12:
+        return False
+    alphacount = 0
+    numcount = 0
+    for c in password:
+        if c.isalpha():
+            alphacount += 1
+        elif c.isdigit():
+            numcount += 1
+        else:
+            pass
+    if alphacount < 4 or numcount < 3:
+        return False
+    if not password.isalnum():  # only num and alpha check
+        return False
+    return True
