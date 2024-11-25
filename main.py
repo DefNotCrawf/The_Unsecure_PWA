@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 import user_management as dbHandler
+import data_handler as sanitiser
 
 # Code snippet for logging a message
 # app.logger.critical("message")
@@ -10,13 +11,14 @@ import user_management as dbHandler
 app = Flask(__name__)
 
 
-@app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/success.html", methods=["POST", "GET"])
 def addFeedback():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
     if request.method == "POST":
         feedback = request.form["feedback"]
+        feedback = sanitiser.feedback_data_handling(feedback)
         dbHandler.insertFeedback(feedback)
         dbHandler.listFeedback()
         return render_template("/success.html", state=True, value="Back")
@@ -25,7 +27,7 @@ def addFeedback():
         return render_template("/success.html", state=True, value="Back")
 
 
-@app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/signup.html", methods=["POST", "GET"])
 def signup():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -33,6 +35,10 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        if sanitiser.password_data_handling(password):
+            pass
+        else:
+            return render_template("/signup.html")
         DoB = request.form["dob"]
         dbHandler.insertUser(username, password, DoB)
         return render_template("/index.html")
@@ -40,7 +46,7 @@ def signup():
         return render_template("/signup.html")
 
 
-@app.route("/index.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/index.html", methods=["POST", "GET"])
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "GET" and request.args.get("url"):

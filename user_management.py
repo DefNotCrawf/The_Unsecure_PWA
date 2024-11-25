@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import time
 import random
+import html
 
 
 def insertUser(username, password, DoB):
@@ -42,9 +43,12 @@ def retrieveUsers(username, password):
 def insertFeedback(feedback):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"INSERT INTO feedback (feedback) VALUES ('{feedback}')", (feedback))
+    cur.execute("INSERT INTO feedback (feedback) VALUES (?)", (feedback,))
     con.commit()
     con.close()
+
+
+import urllib.parse
 
 
 def listFeedback():
@@ -55,6 +59,8 @@ def listFeedback():
     f = open("templates/partials/success_feedback.html", "w")
     for row in data:
         f.write("<p>\n")
-        f.write(f"{row[1]}\n")
+        decoded_feedback = urllib.parse.unquote(row[1])
+        encoded_feedback = html.escape(decoded_feedback)
+        f.write(f"{encoded_feedback}\n")
         f.write("</p>\n")
     f.close()

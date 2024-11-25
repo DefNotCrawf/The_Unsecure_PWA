@@ -97,7 +97,7 @@ def salt_and_hash(password: str) -> bytes:
     return  # to be implemented
 
 
-def example_data_handling(password: str) -> str:
+def example_data_handling(password: str) -> bool:
     if len(password) < 9 or len(password) > 12:
         return False
     alphacount = 0
